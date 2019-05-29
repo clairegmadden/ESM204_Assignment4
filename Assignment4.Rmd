@@ -104,7 +104,7 @@ d_A <- function(q){(A_slope*(180-q)) + A_int}
 
 demand_A <- d_A(q_A)
 
-curve(d_A, from=0, to=180, xlab = "quantity", ylab = "price")
+curve(d_A, from=0, to=300, xlab = "quantity", ylab = "price",  ylim = c(0,200), xlim = c(0,350), col = "yellow")
 #WTP for first unit is $95.19
 
 
@@ -115,7 +115,7 @@ d_B <- function(q){(B_slope*(200-q) + B_int)}
 
 demand_B <- d_B(q_B)
 
-curve(d_B, from=0, to=200, xlab= "quantity", ylab = "price", add= TRUE)
+curve(d_B, from=0, to=300, xlab= "quantity", ylab = "price", add= TRUE,  ylim = c(0,200), xlim = c(0,350), col = "green")
 #WTP for first unit is $49.07
 
 
@@ -126,7 +126,7 @@ d_C <- function(q){(C_slope*(220-q) + C_int)}
 
 demand_C <- d_C(q_C)
 
-curve(d_C, from=0, to=220, xlab= "quantity", ylab = "price", add= TRUE)
+curve(d_C, from=0, to=300, xlab= "quantity", ylab = "price", add= TRUE,  ylim = c(0,200), xlim = c(0,350), col = "blue")
 #WTP for first unit is $160.79
 
 
@@ -137,7 +137,7 @@ d_D <- function(q){(D_slope*(300-q) + D_int)}
 
 demand_D <- d_D(q_D)
 
-curve(d_D, from=0, to=300, xlab= "quantity", ylab = "price", add= TRUE)
+curve(d_D, from=0, to=400, xlab= "quantity", ylab = "price", add= TRUE, ylim = c(0,200), xlim = c(0,350), col = "red")
 #WTP for first unit is $87.67
 
 
@@ -158,6 +158,15 @@ b. Tax on carbon. To emit a ton of carbon in country X, you must pay a tax of $t
 c. Cap and trade. Each sector (A, B, C) is allocated carbon permits equal to their current emissions minus 100 (same as in (a) above), thus achieving the total reduction of 300. Then, these three sectors are allowed to trade with each other. You will need to derive the outcome of that trading.
 
 ```{r}
+
+#Current carbon emissions in the sectors are: (A=180, B=200, C=220, and D=300)
+
+#3a. 
+#derive: (1) the total cost of meeting the target in country X, (2) the cost (or benefit) to each sector, and (3) the tax revenue generated.(dont think tax revenue applies?)
+
+#(1) total cost of meeting the target (total emissions reduced to 300, by 100 in each sector)
+
+
 
 
 
