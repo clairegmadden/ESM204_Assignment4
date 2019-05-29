@@ -15,12 +15,29 @@ library(tidyverse)
 data<-read_csv("HW4Data.csv")
 graph_data<-read_csv("HW4Data_edited.csv")
 
-explore_graph <- ggplot(data, aes(x=Abatement, y=MC_D))+
+explore_graphA <- ggplot(data, aes(x=Abatement, y=MC_A))+
   geom_point()
 
-explore_graph
+explore_graphA
+# looks linear for sure
 
-#all four MC categories look linear enough to do linear regression models
+explore_graphB <- ggplot(data, aes(x=Abatement, y=MC_B))+
+  geom_point()
+
+explore_graphB
+# linear maybe, logistic maybe
+
+explore_graphC <- ggplot(data, aes(x=Abatement, y=MC_C))+
+  geom_point()
+
+explore_graphC
+# close to linear
+
+explore_graphD <- ggplot(data, aes(x=Abatement, y=MC_D))+
+  geom_point()
+
+explore_graphD
+# hard to see trend, maybe linear?
 
 ```
 
@@ -41,6 +58,7 @@ summary(MC_B_model)
 B_int <- MC_B_model$coefficients[1]
 B_slope <- MC_B_model$coefficients[2]
 #p-value: 0.0007672
+# might want to change this one for a better fit?
 
 MC_C_model <- lm(MC_C ~ Abatement, data = data)
 summary(MC_C_model)
@@ -77,8 +95,55 @@ model_plot
 2. Using these models and the current level of carbon emissions, derive each sector’s demand curve for carbon emissions. In other words, how much would each sector be willing to pay for the right to pollute the first unit, second unit, etc? Draw these demand curves on a graph. Which sector is willing to pay the most for the first unit of carbon emissions?
 
 ```{r}
+#Current carbon emissions in the sectors are: (A=180, B=200, C=220, and D=300)
+
+# demand function for sector A
+q_A <- seq(0,180,by=10)
+
+d_A <- function(q){(A_slope*(180-q)) + A_int}
+
+demand_A <- d_A(q_A)
+
+curve(d_A, from=0, to=180, xlab = "quantity", ylab = "price")
+#WTP for first unit is $95.19
 
 
+# demand function for sector B
+q_B <- seq(0,200,by=10)
+
+d_B <- function(q){(B_slope*(200-q) + B_int)}
+
+demand_B <- d_B(q_B)
+
+curve(d_B, from=0, to=200, xlab= "quantity", ylab = "price", add= TRUE)
+#WTP for first unit is $49.07
+
+
+# demand function for sector C
+q_C <- seq(0,220,by=10)
+
+d_C <- function(q){(C_slope*(220-q) + C_int)}
+
+demand_C <- d_C(q_C)
+
+curve(d_C, from=0, to=220, xlab= "quantity", ylab = "price", add= TRUE)
+#WTP for first unit is $160.79
+
+
+# demand function for sector D
+q_D <- seq(0,300,by=10)
+
+d_D <- function(q){(D_slope*(300-q) + D_int)}
+
+demand_D <- d_D(q_D)
+
+curve(d_D, from=0, to=300, xlab= "quantity", ylab = "price", add= TRUE)
+#WTP for first unit is $87.67
+
+
+#sector willing to pay the most for the first unit of carbon emissions is C
+
+#also should probably up the aesthetics on this 
 
 
 ```
