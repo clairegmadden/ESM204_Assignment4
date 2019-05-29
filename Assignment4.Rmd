@@ -167,10 +167,6 @@ c. Cap and trade. Each sector (A, B, C) is allocated carbon permits equal to the
 #(1) total cost of meeting the target (total emissions reduced to 300, by 100 in each sector)
 
 
-
-
-
-
 ```
 
 4. Again, without any co-benefits, suppose that country Y (which only has one carbon-emitting sector, D) has no obligation to reduce its emissions. Country X asks country Y to enter the country X carbon market. Doing so would require country Y to put a cap on carbon emissions at its current level of emissions (300 tons), but would then allow country Y to sell carbon offsets to sectors A, B, or C. Are there any incentives for country Y to enter country X’s carbon market and to thus place a voluntary cap on its emissions? Are there any incentives for country X to try to attract country Y into its market?
