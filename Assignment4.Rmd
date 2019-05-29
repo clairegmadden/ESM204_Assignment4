@@ -16,28 +16,32 @@ data<-read_csv("HW4Data.csv")
 graph_data<-read_csv("HW4Data_edited.csv")
 
 explore_graphA <- ggplot(data, aes(x=Abatement, y=MC_A))+
-  geom_point()
+  geom_point()+
+  geom_smooth()
 
 explore_graphA
 # looks linear for sure
 
 explore_graphB <- ggplot(data, aes(x=Abatement, y=MC_B))+
-  geom_point()
+  geom_point()+
+  geom_smooth()
 
 explore_graphB
-# linear maybe, logistic maybe
+# logistic maybe, cubic?
 
 explore_graphC <- ggplot(data, aes(x=Abatement, y=MC_C))+
-  geom_point()
+  geom_point()+
+  geom_smooth()
 
 explore_graphC
-# close to linear
+# close to linear, maybe exponential
 
 explore_graphD <- ggplot(data, aes(x=Abatement, y=MC_D))+
-  geom_point()
+  geom_point()+
+  geom_smooth()
 
 explore_graphD
-# hard to see trend, maybe linear?
+# hard to see trend, maybe linear would be closest to accurate?
 
 ```
 
@@ -51,6 +55,7 @@ summary(MC_A_model)
 A_int <- MC_A_model$coefficients[1]
 A_slope <- MC_A_model$coefficients[2]
 #p-value: 1.01e-08
+#R-squared: 0.904, pretty good fit
 
 MC_B_model <- lm(MC_B ~ Abatement, data = data)
 summary(MC_B_model)
@@ -58,7 +63,7 @@ summary(MC_B_model)
 B_int <- MC_B_model$coefficients[1]
 B_slope <- MC_B_model$coefficients[2]
 #p-value: 0.0007672
-# might want to change this one for a better fit?
+#R-squared: 0.5355, probably want to change this one for a better fit?
 
 MC_C_model <- lm(MC_C ~ Abatement, data = data)
 summary(MC_C_model)
@@ -66,6 +71,7 @@ summary(MC_C_model)
 C_int <- MC_C_model$coefficients[1]
 C_slope <- MC_C_model$coefficients[2]
 #p-value: 1.044e-07
+#R-squared: 0.8663, pretty good will probably keep this
 
 MC_D_model <- lm(MC_D ~ Abatement, data = data)
 summary(MC_D_model)
@@ -73,6 +79,7 @@ summary(MC_D_model)
 D_int <- MC_D_model$coefficients[1]
 D_slope <- MC_D_model$coefficients[2]
 #p-value: 0.001121
+#R-squared: 0.5108 is worst among them
 
 model_plot <- ggplot(data, aes(x=Abatement))+
   geom_point(aes(y = MC_A, color = "MC_A"))+
@@ -166,6 +173,7 @@ c. Cap and trade. Each sector (A, B, C) is allocated carbon permits equal to the
 
 #(1) total cost of meeting the target (total emissions reduced to 300, by 100 in each sector)
 
+#integrate cost curves from 0-100??
 
 ```
 
