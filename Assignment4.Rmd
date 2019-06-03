@@ -81,21 +81,30 @@ D_slope <- MC_D_model$coefficients[2]
 #p-value: 0.001121
 #R-squared: 0.5108 is worst among them
 
-model_plot <- ggplot(data, aes(x=Abatement))+
-  geom_point(aes(y = MC_A, color = "MC_A"))+
-  geom_smooth(aes(y = MC_A), method = lm, se = FALSE, size = 0.5, color = "gray20")+
-  geom_point(aes(y = MC_B, color = "MC_B"))+
-  geom_smooth(aes(y = MC_B), method = lm, se = FALSE, size = 0.5, color = "gray20")+
-  geom_point(aes(y = MC_C, color = "MC_C"))+
-  geom_smooth(aes(y = MC_C), method = lm, se = FALSE, size = 0.5, color = "gray20")+
-  geom_point(aes(y = MC_D, color = "MC_D"))+
-  geom_smooth(aes(y = MC_D), method = lm, se = FALSE, size = 0.5, color = "gray20")+
-  labs(x = "Abatement (tons of CO2)",
-       y = "Marginal Cost of Abatement ($/ton)")
 
-model_plot
 
-#need to figure out how to make this prettier :/
+a_curve <- function(x){A_int + A_slope*x}
+b_curve <- function(x){B_int + B_slope*x}
+c_curve <- function(x){C_int + C_slope*x}
+d_curve <- function(x){D_int + D_slope*x}
+
+mc_plot <- ggplot(data.frame(x=c(0,200)))+
+  stat_function(fun=a_curve, aes(color = "A"))+
+  stat_function(fun=b_curve, aes(color = "B"))+
+  stat_function(fun=c_curve, aes(color = "C"))+
+  stat_function(fun=d_curve, aes(color = "D"))+
+  scale_x_continuous(limits = c(0,200), expand = c(0,0))+
+  scale_y_continuous(limits = c(0,200), expand = c(0,0))+
+  labs(fil = "", 
+       color = "Sector", 
+       x = "Carbon Abatement (tons of CO2)",
+       y = "Price ($/ton)",
+       title = "Marginal Cost of Carbon Abatement by Sector")+
+  theme_classic()
+
+mc_plot
+
+
 
 ```
 
@@ -107,11 +116,9 @@ model_plot
 # demand function for sector A
 q_A <- seq(0,180,by=10)
 
-d_A <- function(q){(A_slope*(180-q)) + A_int}
+d_A <- function(x){(A_slope*(180-x)) + A_int}
 
 demand_A <- d_A(q_A)
-
-curve(d_A, from=0, to=300, xlab = "quantity", ylab = "price",  ylim = c(0,200), xlim = c(0,350), col = "yellow")
 #WTP for first unit is $95.19
 
 
@@ -121,8 +128,6 @@ q_B <- seq(0,200,by=10)
 d_B <- function(q){(B_slope*(200-q) + B_int)}
 
 demand_B <- d_B(q_B)
-
-curve(d_B, from=0, to=300, xlab= "quantity", ylab = "price", add= TRUE,  ylim = c(0,200), xlim = c(0,350), col = "green")
 #WTP for first unit is $49.07
 
 
@@ -132,8 +137,6 @@ q_C <- seq(0,220,by=10)
 d_C <- function(q){(C_slope*(220-q) + C_int)}
 
 demand_C <- d_C(q_C)
-
-curve(d_C, from=0, to=300, xlab= "quantity", ylab = "price", add= TRUE,  ylim = c(0,200), xlim = c(0,350), col = "blue")
 #WTP for first unit is $160.79
 
 
@@ -143,14 +146,26 @@ q_D <- seq(0,300,by=10)
 d_D <- function(q){(D_slope*(300-q) + D_int)}
 
 demand_D <- d_D(q_D)
-
-curve(d_D, from=0, to=400, xlab= "quantity", ylab = "price", add= TRUE, ylim = c(0,200), xlim = c(0,350), col = "red")
 #WTP for first unit is $87.67
 
 
+demand_plot <-ggplot(data.frame(x=c(0,200)))+
+  stat_function(fun=d_A, aes(color = "A"))+
+  stat_function(fun=d_B, aes(color = "B"))+
+  stat_function(fun=d_C, aes(color = "C"))+
+  stat_function(fun=d_D, aes(color = "D"))+
+  scale_x_continuous(limits = c(0,400), expand = c(0,0))+
+  scale_y_continuous(limits = c(0,200), expand = c(0,0))+
+  labs(fil = "", 
+       color = "Sector", 
+       x = "Carbon Demanded (tons of CO2)",
+       y = "Price ($/ton)",
+       title = "Demand for Carbon Emission by Sector")+
+  theme_classic()
+
+demand_plot
 #sector willing to pay the most for the first unit of carbon emissions is C
 
-#also should probably up the aesthetics on this 
 
 
 ```
