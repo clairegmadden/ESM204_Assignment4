@@ -82,7 +82,6 @@ D_slope <- MC_D_model$coefficients[2]
 #R-squared: 0.5108 is worst among them
 
 
-
 a_curve <- function(x){A_int + A_slope*x}
 b_curve <- function(x){B_int + B_slope*x}
 c_curve <- function(x){C_int + C_slope*x}
@@ -113,60 +112,72 @@ mc_plot
 ```{r}
 #Current carbon emissions in the sectors are: (A=180, B=200, C=220, and D=300)
 
-# demand function for sector A
+# Demand curve for Sector A
+a_demand_int <- a_curve(180)
+a_demand_slope <- (0-a_demand_int)/(180-0)
+#demand curve as a function 
+a_demand_curve <- function(x){
+  a_demand_int + a_demand_slope*x}
+
 q_A <- seq(0,180,by=10)
+WTP_A <- a_demand_curve(q_A)
 
-d_A <- function(x){(A_slope*(180-x)) + A_int}
+#WTP at q=1 is $95.19
 
-demand_A <- d_A(q_A)
-#WTP for first unit is $95.19
+# Demand curve for Sector B
+b_demand_int <- b_curve(200)
+b_demand_slope <- (0-b_demand_int)/(200-0)
+#demand curve as a function 
+b_demand_curve <- function(x){
+  b_demand_int + b_demand_slope*x}
 
-
-# demand function for sector B
 q_B <- seq(0,200,by=10)
+WTP_B <- b_demand_curve(q_B)
 
-d_B <- function(q){(B_slope*(200-q) + B_int)}
+#WTP at q=1 is $49.07
 
-demand_B <- d_B(q_B)
-#WTP for first unit is $49.07
+# Demand curve for Sector C
+c_demand_int <- c_curve(220)
+c_demand_slope <- (0-c_demand_int)/(220-0)
+#demand curve as a function 
+c_demand_curve <- function(x){
+  c_demand_int + c_demand_slope*x}
 
-
-# demand function for sector C
 q_C <- seq(0,220,by=10)
+WTP_C <- c_demand_curve(q_C)
 
-d_C <- function(q){(C_slope*(220-q) + C_int)}
+#WTP at q=1 is $160.79
 
-demand_C <- d_C(q_C)
-#WTP for first unit is $160.79
+# Demand curve for Sector D
+d_demand_int <- d_curve(300)
+d_demand_slope <- (0-d_demand_int)/(300-0)
+# Demand curve as a function
+d_demand_curve <- function(x){d_demand_int + d_demand_slope*x}
 
-
-# demand function for sector D
 q_D <- seq(0,300,by=10)
+WTP_D <- d_demand_curve(q_D)
 
-d_D <- function(q){(D_slope*(300-q) + D_int)}
-
-demand_D <- d_D(q_D)
-#WTP for first unit is $87.67
+#WTP at q=1 is $87.67
 
 
-demand_plot <-ggplot(data.frame(x=c(0,200)))+
-  stat_function(fun=d_A, aes(color = "A"))+
-  stat_function(fun=d_B, aes(color = "B"))+
-  stat_function(fun=d_C, aes(color = "C"))+
-  stat_function(fun=d_D, aes(color = "D"))+
-  scale_x_continuous(limits = c(0,400), expand = c(0,0))+
-  scale_y_continuous(limits = c(0,200), expand = c(0,0))+
-  labs(fil = "", 
-       color = "Sector", 
-       x = "Carbon Demanded (tons of CO2)",
-       y = "Price ($/ton)",
-       title = "Demand for Carbon Emission by Sector")+
-  theme_classic()
+# Plot demand curves for each sector
+demand_plot <- ggplot(data.frame(x=c(0,200))) + 
+  stat_function(fun=a_demand_curve, geom ="line", aes(color = "A")) + 
+  stat_function(fun=b_demand_curve, geom ="line", aes(color = "B")) +
+  stat_function(fun=c_demand_curve, geom ="line", aes(color = "C")) +
+  stat_function(fun=d_demand_curve, geom ="line", aes(color = "D")) +
+  scale_x_continuous(limits =c(0,300), expand = c(0,0))+
+  scale_y_continuous(limits=c(0,200), expand=c(0,0))+
+  theme_classic() +
+  labs(fill = "", 
+       color = "Sector",
+       x = "Carbon Emissions Demand (tons)",
+       y = "Price ($/ton)")+
+  ggtitle("Demand for Carbon Emissions by Sector") 
 
 demand_plot
+
 #sector willing to pay the most for the first unit of carbon emissions is C
-
-
 
 ```
 
@@ -183,14 +194,83 @@ c. Cap and trade. Each sector (A, B, C) is allocated carbon permits equal to the
 
 #Current carbon emissions in the sectors are: (A=180, B=200, C=220, and D=300)
 
+
+
+
+
 #3a. 
 #derive: (1) the total cost of meeting the target in country X, (2) the cost (or benefit) to each sector, and (3) the tax revenue generated.(dont think tax revenue applies?)
 
-#(1) total cost of meeting the target (total emissions reduced to 300, by 100 in each sector)
+#new carbon emissions in sector (A = 80, B = 100, C= 120)
 
-#integrate cost curves from 0-100??
+mc_a <- a_curve(100)
+tc_a <- (0.5*mc_a*100)
+#2451.99
+
+mc_b <- b_curve(100)
+tc_b <- (0.5*mc_b*100)
+#1459.61
+
+mc_c <- c_curve(100)
+tc_c <- (0.5*mc_c*100)
+#3336.38
+
+tc_all <- sum(tc_a, tc_b, tc_c)
+#7247.97
+
 
 ```
+
+
+
+```{r}
+#3b. Tax on carbon. To emit a ton of carbon in country X, you must pay a tax of $t. You will need to find the tax that accomplishes the desired reduction.
+
+#(1) the total cost of meeting the target in country X, (2) the cost (or benefit) to each sector, and (3) the tax revenue generated.
+
+#tax per unit of carbon
+tax <- tc_all/300
+#total cost for sectors A B and C is equal to $24.16 per ton
+#tax = $24.16 per ton should accomplish this
+
+
+#total cost is 
+tc_a_3b <- 80*tax
+
+tc_b_3b <- 100*tax
+
+tc_c_3b <- 120*tax
+
+tc_tax <- sum(tc_a_3b,tc_b_3b,tc_c_3b)
+
+#tax revenue
+tax_rev <- tax*300
+
+#????????
+
+
+```
+
+
+```{r}
+#3c. Cap and trade. Each sector (A, B, C) is allocated carbon permits equal to their current emissions minus 100 (same as in (a) above), thus achieving the total reduction of 300. Then, these three sectors are allowed to trade with each other. You will need to derive the outcome of that trading.
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
 
 4. Again, without any co-benefits, suppose that country Y (which only has one carbon-emitting sector, D) has no obligation to reduce its emissions. Country X asks country Y to enter the country X carbon market. Doing so would require country Y to put a cap on carbon emissions at its current level of emissions (300 tons), but would then allow country Y to sell carbon offsets to sectors A, B, or C. Are there any incentives for country Y to enter country X’s carbon market and to thus place a voluntary cap on its emissions? Are there any incentives for country X to try to attract country Y into its market?
 
