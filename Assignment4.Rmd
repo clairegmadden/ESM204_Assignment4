@@ -281,40 +281,62 @@ agg_demand_plot
 
 #emissions from sector A
 a_emissions_tax <- a_demand1(optimal_tax)
-#102.66 tons of CO2 (if they are emitting this much they abate nothing???)
+#102.66 tons of CO2 
+a_abate <- (180-a_emissions_tax)
+#abate 77.34 tons
 
 #cost of reduction for sector A
-a_mc_abate <- a_curve(180-a_emissions_tax)
-a_cost_tax <- (0.5*(180-a_x_int)*a_mc_abate)
-#2967.56
+a_mc_abate <- a_curve(a_abate)
+a_cost_tax <- (0.5*(a_abate-a_x_int)*a_mc_abate)
+#1121.32
+
+#benefit to sector A 
+a_benefit_tax <- (a_abate*optimal_tax)-a_cost_tax
+#2041.63
 
 #emissions from sector B
 b_emissions_tax <- b_demand1(optimal_tax)
 #33.30
+b_abate <- (200-b_emissions_tax)
+#166.70
 
 #cost of reduction for sector B
-b_mc_abate <- b_curve(200-b_emissions_tax)
-b_cost_tax <- (200-b_emissions_tax)*(0.5*(b_mc_abate+B_int))
-#4314.82
+b_mc_abate <- b_curve(b_abate)
+b_cost_tax <- (b_abate*0.5*(b_mc_abate+B_int))
+#4314.82 
+
+#benefit to B
+b_benefit_tax <- (b_abate*optimal_tax)-b_cost_tax
+#2502.94
 
 #emissions from sector C
 c_emissions_tax <- c_demand1(optimal_tax)
 #164.04
+c_abate <- (220-c_emissions_tax)
+#55.96
 
 #cost of reduction for sector C
-c_mc_abate <- c_curve(220-a_emissions_tax)
-c_cost_tax <- (0.5*(220-c_x_int)*a_mc_abate)
-#3689.00
+c_mc_abate <- c_curve(c_abate)
+c_cost_tax <- (0.5*(c_abate-c_x_int)*a_mc_abate)
+#738.944
+
+#benefit to C
+c_benefit_tax <- (c_abate*optimal_tax)-c_cost_tax
+#1549.65
 
 total_emissions <- sum(a_emissions_tax, b_emissions_tax, c_emissions_tax)
 #300! wooooohooo
 
 cost_total<-sum(a_cost_tax,b_cost_tax,c_cost_tax)
-#10971.38, why is this different than tax revenue?? is the difference a benefit to emitters? 
+#6175.09, why is this different than tax revenue?? is the difference a benefit to emitters? 
+
+benefit_total <- sum(a_benefit_tax, b_benefit_tax, c_benefit_tax)
+#6094.21
 
 tax_rev <- optimal_tax*300
 #12269.3
 
+#total costs+total benefits = tax revenue, does that make sense?
 
 ```
 
@@ -369,10 +391,51 @@ c. What advice can you give country X and country Y about the desirability of al
 ```{r}
 #a. would expect 300 tons in country x and 300 tons in country y
 
-#b. 
+#b. how many credits would x buy from y?? do i need to basically do 3c over again with 
+
+#need to get aggregate demand including sector D
+#find price @ 600
+#find each sector's level of emission at price
+
+
+#aggregate slope and intercept
+agg_demand_int_XY <- sum(a_demand_int1,b_demand_int1,c_demand_int1,d_demand_int1)
+agg_demand_slope_XY <- sum(a_demand_slope1, b_demand_slope1, c_demand_slope1,d_demand_slope1)
+
+
+#back in terms of p=
+agg_demand_int2 <- (-agg_demand_int_XY/agg_demand_slope_XY)
+agg_demand_slope2 <- (1/agg_demand_slope_XY)
+
+agg_demand_curve2 <- function(x){agg_demand_int2 + agg_demand_slope2*x}
+
+trade_price_XY <- agg_demand_curve2(600)
+
+#price is 27.89
+
+#emissions from each sector at price = 27.89
+
+#emissions sector A
+a_demand1(trade_price_XY)
+#127.26
+
+#emissions for sector B
+b_demand1(trade_price_XY)
+#86.32
+
+#emissions sector C
+c_demand1(trade_price_XY)
+#181.84
+
+#emissions sector D
+d_demand1(trade_price_XY)
+#204.56
+
+
+
 
 #c. 
-
+#if Country Y entered the cap and trade market, they would only emit 204.56 tons of carbon and would sell the rest of their credits to country X, meaning that country X would have more local pollution with country Y participating in the cap and trade program than with any of the three alternatives that considered just country X. 
 
 
 ```
