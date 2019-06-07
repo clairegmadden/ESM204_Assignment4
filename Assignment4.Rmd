@@ -103,8 +103,6 @@ mc_plot <- ggplot(data.frame(x=c(0,200)))+
 
 mc_plot
 
-
-
 ```
 
 2. Using these models and the current level of carbon emissions, derive each sector’s demand curve for carbon emissions. In other words, how much would each sector be willing to pay for the right to pollute the first unit, second unit, etc? Draw these demand curves on a graph. Which sector is willing to pay the most for the first unit of carbon emissions?
@@ -196,29 +194,38 @@ c. Cap and trade. Each sector (A, B, C) is allocated carbon permits equal to the
 
 #new carbon emissions in sector (A = 80, B = 100, C= 120)
 
-mc_a <- a_curve(100)
-a_x_int <- a_curve1(0)
+#mc_a <- a_curve(100)
+#a_x_int <- a_curve1(0)
 #14.99
-tc_a <- (0.5*mc_a*(100-a_x_int))
+#tc_a <- (0.5*mc_a*(100-a_x_int))
 #2084.53
 
-mc_b <- b_curve(100)
-tc_b <- (0.5*(mc_b+B_int)*100)
+#mc_b <- b_curve(100)
+#tc_b <- (0.5*(mc_b+B_int)*100)
 #1925.49
 
-mc_c <- c_curve(100)
-c_x_int <- c_curve1(0)
+#mc_c <- c_curve(100)
+#c_x_int <- c_curve1(0)
 #14.87
-tc_c <- (0.5*mc_c*(100-c_x_int))
+#tc_c <- (0.5*mc_c*(100-c_x_int))
 #2840.28
 
-tc_all <- sum(tc_a, tc_b, tc_c)
+#tc_all <- sum(tc_a, tc_b, tc_c)
 #6850.31
 
 # tax revenue is 0
 
+#better way to find cost of abatement
+tc_a_integrate <- integrate(a_curve, 0, 100)
+tc_b_integrate <- integrate(b_curve, 0, 100)
+tc_c_integrate <- integrate(c_curve, 0, 100)
 
+tc_total <- tc_a_integrate$value + tc_b_integrate$value + tc_c_integrate$value
+
+
+# for sectors A and C they are actually saving money by abating until they reach their x intercept of the mc curve
 ```
+
 
 
 
@@ -227,114 +234,165 @@ tc_all <- sum(tc_a, tc_b, tc_c)
 
 #(1) the total cost of meeting the target in country X, (2) the cost (or benefit) to each sector, and (3) the tax revenue generated.
 
+#aggregate mc curve
+a_int1 <- (-A_int/A_slope)
+a_slope1 <- (1/A_slope)
+
+a_curve1 <- function(x){a_int1+a_slope1*x}
+
+b_int1 <- (-B_int/B_slope)
+b_slope1 <- (1/B_slope)
+
+b_curve1 <- function(x){b_int1+b_slope1*x}
+
+c_int1 <- (-C_int/C_slope)
+c_slope1 <- (1/C_slope)
+
+c_curve1 <- function(x){c_int1+c_slope1*x}
+
+d_int1 <- (-D_int/D_slope)
+d_slope1 <- (1/D_slope)
+
+d_curve1 <- function(x){d_int1 + d_slope1*x}
+
+
+
+
+
+
+
+agg_mc_int <- sum(a_int1,b_int1,c_int1)
+agg_mc_slope <- sum(a_slope1,b_slope1,c_slope1)
+
+agg_mc_int1 <- (-agg_mc_int/agg_mc_slope)
+agg_mc_slope1 <- (1/agg_mc_slope)
+
+agg_mc_curve <- function(x){agg_mc_int1 + agg_mc_slope1*x}
+
+
+optimal_tax_mc <- agg_mc_curve(300)
+#39.43
+
+
+
 
 #aggregate demand curve
 #switch a slope and int to be in terms of q=
-a_demand_int1 <- (-a_demand_int/a_demand_slope)
-a_demand_slope1 <- (1/a_demand_slope)
+#a_demand_int1 <- (-a_demand_int/a_demand_slope)
+#a_demand_slope1 <- (1/a_demand_slope)
 
-a_demand1 <- function(x){a_demand_int1 + a_demand_slope1*x}
+#a_demand1 <- function(x){a_demand_int1 + a_demand_slope1*x}
 
 #b slope and int to be in terms of q=
-b_demand_int1 <- (-b_demand_int/b_demand_slope)
-b_demand_slope1 <- (1/b_demand_slope)
+#b_demand_int1 <- (-b_demand_int/b_demand_slope)
+#b_demand_slope1 <- (1/b_demand_slope)
 
-b_demand1 <- function(x){b_demand_int1 + b_demand_slope1*x}
+#b_demand1 <- function(x){b_demand_int1 + b_demand_slope1*x}
 
 #c slope and int to be in terms of q=
-c_demand_int1 <- (-c_demand_int/c_demand_slope)
-c_demand_slope1 <- (1/c_demand_slope)
+#c_demand_int1 <- (-c_demand_int/c_demand_slope)
+#c_demand_slope1 <- (1/c_demand_slope)
 
-c_demand1 <- function(x){c_demand_int1 + c_demand_slope1*x}
+#c_demand1 <- function(x){c_demand_int1 + c_demand_slope1*x}
 
 #d slope and int to be in terms of q=
-d_demand_int1 <- (-d_demand_int/d_demand_slope)
-d_demand_slope1 <- (1/d_demand_slope)
+#d_demand_int1 <- (-d_demand_int/d_demand_slope)
+#d_demand_slope1 <- (1/d_demand_slope)
 
-d_demand1 <- function(x){d_demand_int1 + d_demand_slope1*x}
+#d_demand1 <- function(x){d_demand_int1 + d_demand_slope1*x}
 
 #aggregate slope and intercept
-agg_demand_int <- sum(a_demand_int1,b_demand_int1,c_demand_int1)
-agg_demand_slope <- sum(a_demand_slope1, b_demand_slope1, c_demand_slope1)
+#agg_demand_int <- sum(a_demand_int1,b_demand_int1,c_demand_int1)
+#agg_demand_slope <- sum(a_demand_slope1, b_demand_slope1, c_demand_slope1)
 
 #back in terms of p=
-agg_demand_int1 <- (-agg_demand_int/agg_demand_slope)
-agg_demand_slope1 <- (1/agg_demand_slope)
+#agg_demand_int1 <- (-agg_demand_int/agg_demand_slope)
+#agg_demand_slope1 <- (1/agg_demand_slope)
 
-agg_demand_curve <- function(x){agg_demand_int1 + agg_demand_slope1*x}
+#agg_demand_curve <- function(x){agg_demand_int1 + agg_demand_slope1*x}
 
-optimal_tax <- agg_demand_curve(300)
+#optimal_tax <- agg_demand_curve(300)
+#40.90 if you use aggregate demand, $39.43 if you use aggregate mc
 
-
-agg_demand_plot <- ggplot(data.frame(x=c(0,200))) + 
-  stat_function(fun=agg_demand_curve, geom="line", aes(color = "Aggregate Demand"))+
+agg_mc_plot <- ggplot(data.frame(x=c(0,200))) + 
+  stat_function(fun=agg_mc_curve, geom="line", aes(color = "Aggregate Marginal Cost"))+
   scale_x_continuous(limits =c(0,350), expand = c(0,0))+
   scale_y_continuous(limits=c(0,200), expand=c(0,0))+
   theme_classic() +
   labs(fill = "", 
        color = "Sector",
-       x = "Carbon Emissions Demand (tons)",
+       x = "Carbon Abatement (tons)",
        y = "Price ($/ton)")+
-  ggtitle("Aggregate Demand for Carbon Emissions") 
+  ggtitle("Aggregate Marginal Cost of Abatement") 
 
-agg_demand_plot
+agg_mc_plot
 
 #emissions from sector A
-a_emissions_tax <- a_demand1(optimal_tax)
-#102.66 tons of CO2 
-a_abate <- (180-a_emissions_tax)
-#abate 77.34 tons
+
+a_abate <- a_curve1(optimal_tax_mc)
+#abate 83.33 tons
+a_emissions_tax <- 180-a_abate
+#96.67 tons of CO2 
 
 #cost of reduction for sector A
 a_mc_abate <- a_curve(a_abate)
-a_cost_tax <- (0.5*(a_abate-a_x_int)*a_mc_abate)
-#1121.32
+a_cost_abate <- integrate(a_curve, lower= 0, upper = a_abate)
+#1282.61
 
-#benefit to sector A 
-a_benefit_tax <- (a_abate*optimal_tax)-a_cost_tax
-#2041.63
+#(0.5*(a_abate-a_x_int)*a_mc_abate)
+  
+a_tax_rev <- a_emissions_tax*optimal_tax_mc
+#3811.18
 
 #emissions from sector B
-b_emissions_tax <- b_demand1(optimal_tax)
-#33.30
-b_abate <- (200-b_emissions_tax)
-#166.70
+
+b_abate <- b_curve1(optimal_tax_mc)
+#151.50
+b_emissions_tax <- 200-b_abate
+#48.50
+
 
 #cost of reduction for sector B
 b_mc_abate <- b_curve(b_abate)
-b_cost_tax <- (b_abate*0.5*(b_mc_abate+B_int))
-#4314.82 
+b_cost_abate <- integrate(b_curve, lower= 0, upper = b_abate)
+#3692.27
 
-#benefit to B
-b_benefit_tax <- (b_abate*optimal_tax)-b_cost_tax
-#2502.94
+b_tax_rev <- b_emissions_tax*optimal_tax_mc
+#1912.36
+  
+#(b_abate*0.5*(b_mc_abate+B_int))  
+
 
 #emissions from sector C
-c_emissions_tax <- c_demand1(optimal_tax)
-#164.04
-c_abate <- (220-c_emissions_tax)
-#55.96
+
+c_abate <- c_curve1(optimal_tax_mc)
+#65.17
+c_emissions_tax <- 220-c_abate
+#154.83
 
 #cost of reduction for sector C
 c_mc_abate <- c_curve(c_abate)
-c_cost_tax <- (0.5*(c_abate-c_x_int)*a_mc_abate)
-#738.944
+c_cost_abate<- integrate(c_curve, lower= 0, upper = c_abate)
+#904.93
 
-#benefit to C
-c_benefit_tax <- (c_abate*optimal_tax)-c_cost_tax
-#1549.65
+c_tax_rev <- c_emissions_tax*optimal_tax_mc
+  
+#(0.5*(c_abate-c_x_int)*a_mc_abate)
+  
+
 
 total_emissions <- sum(a_emissions_tax, b_emissions_tax, c_emissions_tax)
 #300! wooooohooo
 
-cost_total<-sum(a_cost_tax,b_cost_tax,c_cost_tax)
+cost_total_abate<- a_cost_abate$value + b_cost_abate$value + c_cost_abate$value
 #6175.09, why is this different than tax revenue?? is the difference a benefit to emitters? 
 
+  
 benefit_total <- sum(a_benefit_tax, b_benefit_tax, c_benefit_tax)
 #6094.21
 
-tax_rev <- optimal_tax*300
-#12269.3
+tax_rev <- optimal_tax_mc*300
+#11827.97
 
 #total costs+total benefits = tax revenue, does that make sense?
 
@@ -351,19 +409,19 @@ tax_rev <- optimal_tax*300
 #only difference is the benefit of abatement = (100-emissions_tax)*optimal_tax
 
 #benefit to A (will be a cost because they will end up emitting more than 100)
-a_benefit_trade <- (100-a_emissions_tax)*optimal_tax
-#-108.88
+a_benefit_trade <- (80-a_emissions_tax)*optimal_tax_mc
+
 
 
 #benefit to B (because they will emit less than 100 and sell extra permits)
-b_benefit_trade <- (100-b_emissions_tax)*optimal_tax
-#2727.99
+b_benefit_trade <- (100-b_emissions_tax)*optimal_tax_mc
+
 
 #benefit to C (will be a cost because they will end up emitting more than 1000)
-c_benefit_trade <- (100-c_emissions_tax)*optimal_tax
-#-2619.12
+c_benefit_trade <- (120-c_emissions_tax)*optimal_tax_mc
 
-#all benefits go to B, because they have the lowest MC of abatement they can benefit most from abating and trading credits
+
+#A and B benefit from trade, C buys more credits 
 
 ```
 
@@ -375,6 +433,88 @@ c_benefit_trade <- (100-c_emissions_tax)*optimal_tax
 ```{r}
 
 # because country Y has lower cost of abatement for carbon emissions above ~60 tons compared to sectors A and C, it would be beneficial for country Y to try to trade carbon credits. Similarly, country Y's WTP for the first few units of carbon emissions is lower than that of sector A and C. The incentive for country X to invite country Y into the market is that they would be able to "consume" more carbon emissions and avoid the increasing MC of abatement at high emissions levels
+
+
+#add sector D to agg mc curve
+Q_a_1 <- 1/A_slope
+Q_a_2 <- A_int/A_slope
+# Q for sector b
+Q_b_1 <- 1/B_slope
+Q_b_2 <- B_int/B_slope
+# Q for sector C
+Q_c_1 <- 1/C_slope
+Q_c_2 <- C_int/C_slope
+# Q for sector D
+Q_d_1 <- 1/D_slope
+Q_d_2 <- D_int/D_slope
+# aggregate Qs
+Q_agg_all_1 <- Q_a_1 + Q_b_1 + Q_c_1 + Q_d_1
+Q_agg_all_2 <- Q_a_2 + Q_b_2 + Q_c_2 + Q_d_2
+
+
+# make function of price
+P_agg_all_1 <- 1/Q_agg_all_1
+P_agg_all_2 <- Q_agg_all_2/Q_agg_all_1 # should this be negative
+fun_agg_all <- function(x) P_agg_all_2 + P_agg_all_1*x
+credit_price <- fun_agg_all(300)
+#29.80
+
+
+
+#find emissions for each sector
+
+a_ct_abate <- a_curve1(credit_price)
+#66.65
+a_ct_emit <- 180-a_ct_abate
+#113.35
+
+b_ct_abate <- b_curve1(credit_price)
+#103.07
+b_ct_emit <- 200-b_ct_abate
+#96.93
+
+c_ct_abate <- c_curve1(credit_price)
+#52.89
+c_ct_emit <- 220-c_ct_abate
+#167.11
+
+d_ct_abate <- d_curve1(credit_price)
+#77.38
+d_ct_emit <- 300-d_ct_abate
+#222.61
+
+a_ct_benefit <- (100-a_ct_emit)*credit_price
+#-397.84
+a_ct_cost <- integrate(a_curve, 0, a_ct_abate)
+#705.10
+
+a_nb <- a_ct_benefit - a_ct_cost$value
+#-1102.94
+
+b_ct_benefit <- (100-b_ct_emit)*credit_price
+#91.53
+b_ct_cost <- integrate(b_curve, 0, b_ct_abate)
+#2016.08
+
+b_nb <- b_ct_benefit - b_ct_cost$value
+#-1924.55
+
+
+c_ct_benefit <- (100-c_ct_emit)*credit_price
+#-2000.01
+c_ct_cost <- integrate(c_curve, 0, c_ct_abate)
+#479.92
+
+c_nb <- c_ct_benefit - c_ct_cost$value
+#-2479.93
+
+d_ct_benefit <- (300-d_ct_emit)*credit_price
+#2306.32
+d_ct_cost <- integrate(d_curve, 0, d_ct_abate)
+#1528.00
+
+d_nb <- d_ct_benefit - d_ct_cost$value
+#778.31
 
 
 ```
@@ -391,51 +531,16 @@ c. What advice can you give country X and country Y about the desirability of al
 ```{r}
 #a. would expect 300 tons in country x and 300 tons in country y
 
-#b. how many credits would x buy from y?? do i need to basically do 3c over again with 
+#b.
+pollution_x <- sum(a_ct_emit,b_ct_emit,c_ct_emit)
+#377.39
 
-#need to get aggregate demand including sector D
-#find price @ 600
-#find each sector's level of emission at price
-
-
-#aggregate slope and intercept
-agg_demand_int_XY <- sum(a_demand_int1,b_demand_int1,c_demand_int1,d_demand_int1)
-agg_demand_slope_XY <- sum(a_demand_slope1, b_demand_slope1, c_demand_slope1,d_demand_slope1)
-
-
-#back in terms of p=
-agg_demand_int2 <- (-agg_demand_int_XY/agg_demand_slope_XY)
-agg_demand_slope2 <- (1/agg_demand_slope_XY)
-
-agg_demand_curve2 <- function(x){agg_demand_int2 + agg_demand_slope2*x}
-
-trade_price_XY <- agg_demand_curve2(600)
-
-#price is 27.89
-
-#emissions from each sector at price = 27.89
-
-#emissions sector A
-a_demand1(trade_price_XY)
-#127.26
-
-#emissions for sector B
-b_demand1(trade_price_XY)
-#86.32
-
-#emissions sector C
-c_demand1(trade_price_XY)
-#181.84
-
-#emissions sector D
-d_demand1(trade_price_XY)
-#204.56
-
-
+pollution_y <- d_ct_emit
+#222.61
 
 
 #c. 
-#if Country Y entered the cap and trade market, they would only emit 204.56 tons of carbon and would sell the rest of their credits to country X, meaning that country X would have more local pollution with country Y participating in the cap and trade program than with any of the three alternatives that considered just country X. 
+#if Country Y entered the cap and trade market, they would only emit 222.61 tons of carbon and would sell the rest of their credits to country X, meaning that country X would have more local pollution with country Y participating in the cap and trade program than with any of the three alternatives that considered just country X. 
 
 
 ```
